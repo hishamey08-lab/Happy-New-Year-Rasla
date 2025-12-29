@@ -5,219 +5,179 @@
 <title>Happy-New-Year-Rasla</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Segoe UI',sans-serif;
-}
-
-html,body{
-  height:100%;
-  overflow-x:hidden;
-  scroll-behavior:smooth;
-}
-
-/* BACKGROUND */
 body{
-  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#000;
   color:white;
-}
-
-/* SECTIONS */
-section{
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
   text-align:center;
-  padding:20px;
-  position:relative;
-  z-index:2;
+  overflow:hidden;
+}
+.page{
+  display:none;
+  height:100vh;
+  width:100vw;
+}
+.active{display:block}
+
+/* HEARTBEAT */
+.heartbeat{
+  animation:heartbeat 1s infinite;
+  font-size:2em;
+  color:pink;
+}
+@keyframes heartbeat{
+  0%{transform:scale(1)}
+  25%{transform:scale(1.15)}
+  40%{transform:scale(1)}
+  60%{transform:scale(1.2)}
+  100%{transform:scale(1)}
 }
 
-h1{ font-size:2.3em; }
-p{ font-size:1.2em; margin-top:10px; }
-
-/* INPUTS & BUTTONS */
-input,button{
-  margin-top:20px;
-  padding:12px 25px;
-  border:none;
-  border-radius:25px;
-  font-size:16px;
-}
-button{
-  background:crimson;
-  color:white;
-  cursor:pointer;
-}
-
-/* SNOW & HEARTS */
-.effect{
-  position:fixed;
-  top:-10%;
-  animation:fall linear infinite;
-  pointer-events:none;
-  z-index:1;
-}
-.snow{ color:white; }
-.heart{ color:pink; }
-
-@keyframes fall{
-  to{ transform:translateY(120vh); }
-}
-
-/* GAMES */
-.game-box{
-  background:rgba(255,255,255,0.15);
-  padding:20px;
-  border-radius:15px;
-  margin:15px;
-}
-
-/* HEART GAME */
-.heart-btn{
-  font-size:35px;
-  background:none;
-  border:none;
-  cursor:pointer;
-}
-
-/* PUZZLE */
-#puzzle{
-  width:300px;
-  height:300px;
-  margin:20px auto;
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-}
-.piece{
-  width:100px;
-  height:100px;
-  background-image:url('IMG-20251005-WA0029.jpg');
-  background-size:300px 300px;
-  border:1px solid #fff;
-}
-
-/* PHOTO */
-.wish-img{
-  width:220px;
-  border-radius:20px;
-  margin:10px;
-  border:3px solid pink;
-}
-
-/* FIREWORKS */
+/* MINI FIREWORKS */
 .firework{
   position:fixed;
   width:6px;
   height:6px;
   border-radius:50%;
-  animation:explode 1.2s ease-out forwards;
-  pointer-events:none;
-  z-index:5;
+  animation:explode .8s ease-out forwards;
+  z-index:9999;
+}
+@keyframes explode{
+  from{transform:scale(0);opacity:1}
+  to{transform:scale(20);opacity:0}
 }
 
-@keyframes explode{
-  from{ transform:scale(1); opacity:1; }
-  to{ transform:scale(15); opacity:0; }
+/* HEART GAME */
+.heart{
+  position:absolute;
+  font-size:30px;
+  cursor:pointer;
+}
+
+/* PUZZLE */
+.puzzle{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  width:300px;
+  margin:auto;
+}
+.puzzle img{
+  width:100%;
+  border:1px solid #fff;
+}
+
+/* WISH */
+img{
+  max-width:80%;
+  margin:10px;
+  border-radius:15px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- MUSIC : Full vocal version online -->
-<audio id="bgMusic" loop autoplay>
-  <source src="https://www.mfiles.co.uk/mp3-downloads/christina-perri-a-thousand-years.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
+<!-- MUSIC -->
+<audio id="bgMusic" loop>
+  <source src="A_Thousand_Years_Lyrics_-_Christina_Perri_#athousandyears_#christinaperri#trending_#lyrics(256k).mp3">
 </audio>
 
-<!-- SNOW + HEART EFFECT -->
-<script>
-function createEffect(char,cls){
-  const e=document.createElement("div");
-  e.className="effect "+cls;
-  e.innerHTML=char;
-  e.style.left=Math.random()*100+"vw";
-  e.style.fontSize=(14+Math.random()*14)+"px";
-  e.style.animationDuration=(4+Math.random()*6)+"s";
-  document.body.appendChild(e);
-  setTimeout(()=>e.remove(),10000);
-}
-setInterval(()=>createEffect("❄️","snow"),300);
-setInterval(()=>createEffect("💗","heart"),500);
-</script>
+<!-- PAGE 1 PASSWORD -->
+<div class="page active" id="page1">
+  <h1>Happy New Year Rasla ❤️</h1>
+  <input type="password" id="pass" placeholder="Enter Password">
+  <br><br>
+  <button onclick="checkPass()">Enter</button>
+  <p id="statusText">Enter Password</p>
+</div>
 
-<!-- PAGE 1 : PASSWORD -->
-<section>
-  <div>
-    <h1>Happy-New-Year-Rasla</h1>
-    <p>Password required</p>
-    <input type="password" id="pass" placeholder="Password">
-    <br>
-    <button onclick="checkPass()">Enter</button>
-  </div>
-</section>
+<!-- PAGE 2 HEART GAME -->
+<div class="page" id="page2">
+  <h2>Catch 5 Hearts 💗</h2>
+  <p id="heartCount">0 / 5</p>
+</div>
 
-<!-- PAGE 2 : GAMES -->
-<section>
-  <div>
-    <h1>Happy-New-Year-Rasla</h1>
+<!-- PAGE 3 PUZZLE -->
+<div class="page" id="page3">
+  <h2>Love Puzzle 💖</h2>
+  <div class="puzzle" id="puzzle"></div>
+</div>
 
-    <!-- GAME 1 -->
-    <div class="game-box">
-      <p>💗 Catch 5 Hearts</p>
-      <p id="score">0 / 5</p>
-      <button class="heart-btn" onclick="catchHeart()">💗</button>
-    </div>
+<!-- PAGE 4 WISH -->
+<div class="page" id="page4">
+  <h2>My Wish for This New Year</h2>
+  <p>
+    This New Year, I don’t wish for money,<br>
+    I don’t wish for fame,<br>
+    I don’t wish for success.<br><br>
 
-    <!-- GAME 2 -->
-    <div class="game-box">
-      <h3>🧩 Love Puzzle</h3>
-      <div id="puzzle"></div>
-      <p id="puzzleMsg" style="display:none;">
-        Every broken piece of my life becomes perfect with you, Rasla ❤️
-      </p>
-    </div>
+    My only wish is <b>you, Rasla ❤️</b><br><br>
 
-    <button onclick="next()">Next</button>
-  </div>
-</section>
+    Because when you are with me,<br>
+    every fear becomes calm,<br>
+    every broken part feels complete,<br>
+    and every moment feels like home.<br><br>
 
-<!-- PAGE 3 : WISH -->
-<section onmouseenter="startFireworks()">
-  <div>
-    <h1>Happy-New-Year-Rasla</h1>
-    <p>
-      My only wish this New Year is not money or success,<br>
-      it’s you, Rasla ❤️<br><br>
-      If I get you, I already have everything.
-    </p>
-    <div>
-      <img src="IMG-20251129-WA0066.jpg" class="wish-img">
-      <img src="IMG-20251129-WA0032.jpg" class="wish-img">
-    </div>
-  </div>
-</section>
+    If I have you,<br>
+    I already have everything.<br><br>
+
+    <b>Happy New Year, my forever. 🎆</b>
+  </p>
+
+  <img src="IMG-20251129-WA0066.jpg">
+  <img src="IMG-20251129-WA0032.jpg">
+</div>
 
 <script>
-/* PAGE CONTROL */
-let current=0;
-const pages=document.querySelectorAll("section");
+const bgMusic=document.getElementById("bgMusic");
 
-function next(){
-  current++;
-  pages[current].scrollIntoView();
+function show(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-/* PASSWORD WITH 10-SECOND DELAY */
+/* MINI FIREWORKS */
+function miniFireworks(){
+  for(let i=0;i<15;i++){
+    let fw=document.createElement("div");
+    fw.className="firework";
+    fw.style.left=Math.random()*100+"vw";
+    fw.style.top=Math.random()*100+"vh";
+    fw.style.background=`hsl(${Math.random()*360},100%,60%)`;
+    document.body.appendChild(fw);
+    setTimeout(()=>fw.remove(),800);
+  }
+}
+
+/* PASSWORD + COUNTDOWN */
 function checkPass(){
-  if(document.getElementById("pass").value==="RAAHII"){
-    document.getElementById("bgMusic").play();
-    alert("Password correct! Please wait 10 seconds...");
-    setTimeout(()=>{ next(); }, 10000); // Wait 10 seconds
+  if(pass.value==="RAAHII"){
+    bgMusic.play();
+
+    let count=10;
+    const status=document.getElementById("statusText");
+    status.classList.add("heartbeat");
+
+    const timer=setInterval(()=>{
+      if(count>3){
+        status.innerHTML="💓 "+count;
+      }else if(count===3){
+        status.innerHTML="💓 Get ready Rasla… 3";
+      }else if(count===2){
+        status.innerHTML="💓 Get ready Rasla… 2";
+      }else if(count===1){
+        status.innerHTML="💓 Get ready Rasla… 1";
+        miniFireworks();
+      }
+      count--;
+
+      if(count<0){
+        clearInterval(timer);
+        show("page2");
+        startHearts();
+      }
+    },1000);
   }else{
     alert("Wrong password ❌");
   }
@@ -225,60 +185,44 @@ function checkPass(){
 
 /* HEART GAME */
 let hearts=0;
-function catchHeart(){
-  hearts++;
-  document.getElementById("score").innerText=hearts+" / 5";
-  if(hearts>=5){
-    alert("Rasla, you won my heart 💖");
-  }
+function startHearts(){
+  hearts=0;
+  document.getElementById("heartCount").innerHTML="0 / 5";
+
+  const interval=setInterval(()=>{
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="💗";
+    h.style.left=Math.random()*90+"vw";
+    h.style.top=Math.random()*90+"vh";
+    h.onclick=()=>{
+      hearts++;
+      document.getElementById("heartCount").innerHTML=hearts+" / 5";
+      h.remove();
+      if(hearts===5){
+        clearInterval(interval);
+        show("page3");
+        loadPuzzle();
+      }
+    };
+    document.getElementById("page2").appendChild(h);
+    setTimeout(()=>h.remove(),3000);
+  },800);
 }
 
 /* PUZZLE GAME */
-const puzzle=document.getElementById("puzzle");
-let order=[0,1,2,3,4,5,6,7,8].sort(()=>Math.random()-0.5);
-let selected=null;
-
-function drawPuzzle(){
+function loadPuzzle(){
+  const puzzle=document.getElementById("puzzle");
   puzzle.innerHTML="";
-  order.forEach((n,i)=>{
-    const d=document.createElement("div");
-    d.className="piece";
-    d.style.backgroundPosition=
-      `${-(n%3)*100}px ${-Math.floor(n/3)*100}px`;
-    d.onclick=()=>select(i);
-    puzzle.appendChild(d);
-  });
-}
-function select(i){
-  if(selected===null){ selected=i; return; }
-  [order[selected],order[i]]=[order[i],order[selected]];
-  selected=null;
-  drawPuzzle();
-  checkPuzzle();
-}
-function checkPuzzle(){
-  if(order.every((v,i)=>v===i)){
-    document.getElementById("puzzleMsg").style.display="block";
+  for(let i=0;i<9;i++){
+    const img=document.createElement("img");
+    img.src="IMG-20251005-WA0029.jpg";
+    puzzle.appendChild(img);
   }
-}
-drawPuzzle();
-
-/* FIREWORKS */
-let fireInt;
-function launchFirework(){
-  const f=document.createElement("div");
-  f.className="firework";
-  f.style.left=Math.random()*100+"vw";
-  f.style.top=Math.random()*60+"vh";
-  f.style.background=
-    "hsl("+Math.random()*360+",100%,60%)";
-  document.body.appendChild(f);
-  setTimeout(()=>f.remove(),1200);
-}
-function startFireworks(){
-  if(!fireInt){
-    fireInt=setInterval(launchFirework,400);
-  }
+  setTimeout(()=>{
+    alert("Puzzle solved ❤️");
+    show("page4");
+  },6000);
 }
 </script>
 

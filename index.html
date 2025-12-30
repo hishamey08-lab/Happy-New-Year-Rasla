@@ -15,7 +15,6 @@ body {
   overflow: hidden;
 }
 
-/* Pages */
 .page {
   display: none;
   height: 100vh;
@@ -26,16 +25,12 @@ body {
 }
 .page.active { display: flex; }
 
-/* Heartbeat */
-.heartbeat {
-  animation: beat 1s infinite;
-}
+.heartbeat { animation: beat 1s infinite; }
 @keyframes beat {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.1);}
 }
 
-/* Buttons */
 button {
   padding: 12px 25px;
   font-size: 16px;
@@ -45,62 +40,53 @@ button {
   cursor: pointer;
 }
 
-/* Countdown */
-#countdown {
-  font-size: 50px;
-  margin-top: 20px;
-}
+#countdown { font-size: 50px; }
 
-/* Hearts */
 .heart {
   position: fixed;
   color: pink;
   animation: fall 5s linear infinite;
 }
 @keyframes fall {
-  from { top: -10%; opacity: 1; }
-  to { top: 110%; opacity: 0; }
+  from { top:-10%; opacity:1; }
+  to { top:110%; opacity:0; }
 }
 
-/* PUZZLE (FIXED) */
 .puzzle {
   display: grid;
   grid-template-columns: repeat(3, 100px);
   grid-template-rows: repeat(3, 100px);
-  gap: 6px;
+  gap: 5px;
 }
-.puzzle-piece {
+.puzzle img {
   width: 100px;
   height: 100px;
-  background-image: url("IMG-20251005-WA0029.jpg");
-  background-size: 300px 300px;
-  border-radius: 12px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-/* Fireworks */
 .firework {
   position: fixed;
   font-size: 30px;
-  animation: explode 1s ease-out forwards;
+  animation: explode 1s forwards;
 }
 @keyframes explode {
-  from { transform: scale(0); opacity: 1; }
-  to { transform: scale(3); opacity: 0; }
+  from { transform:scale(0); opacity:1; }
+  to { transform:scale(3); opacity:0; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- MUSIC (FIXED) -->
-<audio id="music" loop preload="auto">
-  <source src="A_Thousand_Years_Lyrics_-_Christina_Perri_#athousandyears_#christinaperri#trending_#lyrics(256k).mp3" type="audio/mpeg">
+<audio id="music" loop>
+  <source src="A_Thousand_Years_Lyrics_-_Christina_Perri_#athousandyears_#christinaperri#trending_#lyrics(256k).mp3">
 </audio>
 
 <!-- PAGE 1 -->
 <div class="page active" id="page1">
   <h1 class="heartbeat">🔐 Enter Password</h1>
-  <input id="password" type="password" placeholder="Password">
+  <input id="password" type="password">
   <br><br>
   <button onclick="checkPassword()">Unlock ❤️</button>
 </div>
@@ -135,8 +121,7 @@ Because when you are with me,<br>
 every fear becomes calm,<br>
 every broken part feels complete,<br>
 and every moment feels like home.<br><br>
-If I have you,<br>
-I already have everything.<br><br>
+If I have you, I already have everything.<br><br>
 <b>Happy New Year, my forever 🎆</b>
   </p>
   <img src="IMG-20251129-WA0066.jpg" width="200"><br><br>
@@ -146,20 +131,18 @@ I already have everything.<br><br>
 <script>
 const music = document.getElementById("music");
 
-/* Hearts */
-setInterval(() => {
-  const h = document.createElement("div");
-  h.className = "heart";
-  h.innerHTML = "💗";
-  h.style.left = Math.random()*100 + "vw";
+setInterval(()=>{
+  const h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="💗";
+  h.style.left=Math.random()*100+"vw";
   document.body.appendChild(h);
   setTimeout(()=>h.remove(),5000);
-}, 600);
+},500);
 
-/* Fireworks */
-function fireworks() {
+function fireworks(){
   for(let i=0;i<6;i++){
-    const f = document.createElement("div");
+    const f=document.createElement("div");
     f.className="firework";
     f.innerHTML="🎆";
     f.style.left=Math.random()*100+"vw";
@@ -169,100 +152,102 @@ function fireworks() {
   }
 }
 
-/* Page switch */
 function show(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
-/* Password + MUSIC FIX */
 function checkPassword(){
-  if(password.value === "RAAHII"){
-    music.play().catch(()=>{
-      document.body.addEventListener("click", ()=>music.play(), {once:true});
-    });
+  if(password.value==="RAAHII"){
+    music.play();
     show("page2");
     startCountdown();
-  } else {
-    alert("Wrong password 😢");
-  }
+  } else alert("Wrong password");
 }
 
-/* Countdown */
-let c = 10;
+let c=10;
 function startCountdown(){
-  const t = setInterval(()=>{
+  const t=setInterval(()=>{
     c--;
-    countdown.innerText = c;
-    if(c === 3) countdown.innerText="Get ready Rasla… 3";
-    if(c === 2) countdown.innerText="2";
-    if(c === 1) countdown.innerText="1";
-    if(c === 0){
+    countdown.innerText=c<=3?`Get ready Rasla… ${c}`:c;
+    if(c===0){
       clearInterval(t);
       fireworks();
       show("page3");
-      startGame1();
+      startGame();
     }
   },1000);
 }
 
-/* Game 1 */
 let score=0;
-function startGame1(){
+function startGame(){
   score=0;
-  scoreEl = document.getElementById("score");
-  const interval = setInterval(()=>{
+  scoreEl.innerText=0;
+  const g=setInterval(()=>{
     const h=document.createElement("div");
     h.innerHTML="💖";
     h.style.position="absolute";
     h.style.left=Math.random()*90+"vw";
     h.style.top=Math.random()*90+"vh";
-    h.style.fontSize="30px";
     h.onclick=()=>{
       h.remove();
       score++;
       scoreEl.innerText=score;
       if(score===5){
-        clearInterval(interval);
+        clearInterval(g);
         fireworks();
         setTimeout(()=>{
           show("page4");
           loadPuzzle();
         },1000);
       }
-    }
+    };
     document.body.appendChild(h);
     setTimeout(()=>h.remove(),2000);
   },700);
 }
 
-/* PUZZLE (FIXED IMAGE SPLIT) */
+/* REAL PUZZLE */
+let selected=null;
 function loadPuzzle(){
-  const puzzle=document.getElementById("puzzle");
   puzzle.innerHTML="";
-
-  let parts=[];
-  for(let y=0;y<3;y++){
-    for(let x=0;x<3;x++){
-      parts.push({x,y});
-    }
+  const pieces=[];
+  for(let i=0;i<9;i++){
+    const img=document.createElement("img");
+    img.src="IMG-20251005-WA0029.jpg";
+    img.dataset.correct=i;
+    img.style.objectFit="none";
+    img.style.objectPosition=`-${(i%3)*100}px -${Math.floor(i/3)*100}px`;
+    pieces.push(img);
   }
-
-  parts.sort(()=>Math.random()-0.5);
-
-  parts.forEach(p=>{
-    const piece=document.createElement("div");
-    piece.className="puzzle-piece";
-    piece.style.backgroundPosition = `-${p.x*100}px -${p.y*100}px`;
-    puzzle.appendChild(piece);
+  pieces.sort(()=>Math.random()-0.5);
+  pieces.forEach((img,i)=>{
+    img.onclick=()=>{
+      if(!selected){
+        selected=img;
+        img.style.outline="3px solid pink";
+      } else {
+        [selected.style.objectPosition,img.style.objectPosition]=
+        [img.style.objectPosition,selected.style.objectPosition];
+        [selected.dataset.correct,img.dataset.correct]=
+        [img.dataset.correct,selected.dataset.correct];
+        selected.style.outline="none";
+        selected=null;
+        checkPuzzle();
+      }
+    };
+    puzzle.appendChild(img);
   });
+}
 
-  setTimeout(()=>{
+function checkPuzzle(){
+  const imgs=[...document.querySelectorAll(".puzzle img")];
+  if(imgs.every((img,i)=>img.dataset.correct==i)){
     fireworks();
-    show("page5");
-  },6000);
+    setTimeout(()=>show("page5"),1200);
+  }
 }
 </script>
 
 </body>
-        </html>
+    </html>

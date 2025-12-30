@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Happy-New-Year-Rasla</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
@@ -18,7 +19,7 @@ body{
   height:100vh;
   width:100vw;
 }
-.active{display:block}
+.page.active{display:block}
 
 /* HEARTBEAT */
 .heartbeat{
@@ -34,7 +35,7 @@ body{
   100%{transform:scale(1)}
 }
 
-/* MINI FIREWORKS */
+/* FIREWORKS */
 .firework{
   position:fixed;
   width:6px;
@@ -83,65 +84,60 @@ img{
 
 <body>
 
-<!-- 🎵 BACKGROUND MUSIC (INSTRUMENTAL) -->
+<!-- 🎵 BACKGROUND MUSIC -->
 <audio id="bgMusic" loop preload="auto">
   <source src="A_Thousand_Years_Instrumental.mp3" type="audio/mpeg">
 </audio>
 
-<!-- PAGE 1 PASSWORD -->
+<!-- PAGE 1 -->
 <div class="page active" id="page1">
-  <h1>Happy New Year Rasla ❤️</h1>
-  <input type="password" id="pass" placeholder="Enter Password">
+  <h1 class="heartbeat">🔐 Enter Password</h1>
+  <input type="password" id="pass" placeholder="Password">
   <br><br>
-  <button onclick="checkPass()">Enter</button>
-  <p id="statusText">Enter Password</p>
+  <button onclick="checkPass()">Unlock ❤️</button>
+  <p id="statusText"></p>
 </div>
 
-<!-- PAGE 2 HEART GAME -->
+<!-- PAGE 2 -->
 <div class="page" id="page2">
   <h2>Catch 5 Hearts 💗</h2>
   <p id="heartCount">0 / 5</p>
 </div>
 
-<!-- PAGE 3 PUZZLE -->
+<!-- PAGE 3 -->
 <div class="page" id="page3">
   <h2>Love Puzzle 💖</h2>
   <div class="puzzle" id="puzzle"></div>
 </div>
 
-<!-- PAGE 4 WISH -->
+<!-- PAGE 4 -->
 <div class="page" id="page4">
-  <h2>My Wish for This New Year</h2>
+  <h2 class="heartbeat">My Wish for This New Year</h2>
   <p>
     This New Year, I don’t wish for money,<br>
     I don’t wish for fame,<br>
     I don’t wish for success.<br><br>
-
     My only wish is <b>you, Rasla ❤️</b><br><br>
-
     Because when you are with me,<br>
     every fear becomes calm,<br>
     every broken part feels complete,<br>
     and every moment feels like home.<br><br>
-
     If I have you,<br>
     I already have everything.<br><br>
-
-    <b>Happy New Year, my forever. 🎆</b>
+    <b>Happy New Year, my forever 🎆</b>
   </p>
-
   <img src="IMG-20251129-WA0066.jpg">
   <img src="IMG-20251129-WA0032.jpg">
 </div>
 
 <script>
-/* PAGE CONTROL */
+/* PAGE SWITCH */
 function show(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
-/* 🎵 MUSIC — START ON ANY USER ACTION */
+/* MUSIC – USER ACTION */
 let musicStarted=false;
 function startMusic(){
   if(!musicStarted){
@@ -155,36 +151,32 @@ document.addEventListener("click",startMusic);
 document.addEventListener("touchstart",startMusic);
 
 /* FIREWORKS */
-function miniFireworks(){
-  for(let i=0;i<15;i++){
-    const fw=document.createElement("div");
-    fw.className="firework";
-    fw.style.left=Math.random()*100+"vw";
-    fw.style.top=Math.random()*100+"vh";
-    fw.style.background=`hsl(${Math.random()*360},100%,60%)`;
-    document.body.appendChild(fw);
-    setTimeout(()=>fw.remove(),800);
+function fireworks(){
+  for(let i=0;i<12;i++){
+    const f=document.createElement("div");
+    f.className="firework";
+    f.style.left=Math.random()*100+"vw";
+    f.style.top=Math.random()*100+"vh";
+    f.style.background=`hsl(${Math.random()*360},100%,60%)`;
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),800);
   }
 }
 
 /* PASSWORD + COUNTDOWN */
 function checkPass(){
   if(pass.value==="RAAHII"){
-    startMusic(); // ✅ music guaranteed
-    let count=10;
+    startMusic();
+    let c=10;
     const status=document.getElementById("statusText");
     status.classList.add("heartbeat");
 
     const timer=setInterval(()=>{
-      if(count>3){
-        status.innerHTML="💓 "+count;
-      }else{
-        status.innerHTML="💓 Get ready Rasla… "+count;
-        if(count===1) miniFireworks();
-      }
-      count--;
-
-      if(count<0){
+      if(c>3) status.innerText=c;
+      else status.innerText="Get ready Rasla… "+c;
+      if(c===1) fireworks();
+      c--;
+      if(c<0){
         clearInterval(timer);
         show("page2");
         startHearts();
@@ -199,25 +191,24 @@ function checkPass(){
 let hearts=0;
 function startHearts(){
   hearts=0;
-  document.getElementById("heartCount").innerHTML="0 / 5";
-
+  heartCount.innerText="0 / 5";
   const interval=setInterval(()=>{
     const h=document.createElement("div");
     h.className="heart";
-    h.innerHTML="💗";
+    h.innerText="💗";
     h.style.left=Math.random()*90+"vw";
     h.style.top=Math.random()*90+"vh";
     h.onclick=()=>{
       hearts++;
-      document.getElementById("heartCount").innerHTML=hearts+" / 5";
+      heartCount.innerText=hearts+" / 5";
       h.remove();
       if(hearts===5){
         clearInterval(interval);
-        show("page3");
-        loadPuzzle();
+        fireworks();
+        setTimeout(()=>{show("page3");loadPuzzle();},800);
       }
     };
-    document.getElementById("page2").appendChild(h);
+    page2.appendChild(h);
     setTimeout(()=>h.remove(),3000);
   },800);
 }
@@ -226,34 +217,26 @@ function startHearts(){
 let first=null;
 
 function loadPuzzle(){
-  const puzzle=document.getElementById("puzzle");
   puzzle.innerHTML="";
   first=null;
+  let order=[0,1,2,3,4,5,6,7,8].sort(()=>Math.random()-0.5);
 
-  let order=[0,1,2,3,4,5,6,7,8];
-  order.sort(()=>Math.random()-0.5);
-
-  order.forEach((pos,i)=>{
-    const div=document.createElement("div");
-    div.className="piece";
-
-    const x=(pos%3)*-100;
-    const y=Math.floor(pos/3)*-100;
-    div.style.backgroundPosition=`${x}px ${y}px`;
-
-    div.onclick=()=>selectPiece(div);
-    puzzle.appendChild(div);
+  order.forEach(pos=>{
+    const d=document.createElement("div");
+    d.className="piece";
+    d.style.backgroundPosition=`${-(pos%3)*100}px ${-Math.floor(pos/3)*100}px`;
+    d.onclick=()=>selectPiece(d);
+    puzzle.appendChild(d);
   });
 }
 
-function selectPiece(piece){
+function selectPiece(p){
   if(!first){
-    first=piece;
-    piece.style.outline="2px solid pink";
+    first=p;
+    p.style.outline="2px solid pink";
   }else{
-    const temp=first.style.backgroundPosition;
-    first.style.backgroundPosition=piece.style.backgroundPosition;
-    piece.style.backgroundPosition=temp;
+    [first.style.backgroundPosition,p.style.backgroundPosition]=
+    [p.style.backgroundPosition,first.style.backgroundPosition];
     first.style.outline="none";
     first=null;
     checkSolved();
@@ -261,16 +244,14 @@ function selectPiece(piece){
 }
 
 function checkSolved(){
-  const pieces=document.querySelectorAll(".piece");
-  let correct=true;
-  pieces.forEach((p,i)=>{
-    const x=(i%3)*-100+"px";
-    const y=Math.floor(i/3)*-100+"px";
-    if(p.style.backgroundPosition!==`${x} ${y}`) correct=false;
+  const pcs=document.querySelectorAll(".piece");
+  let ok=true;
+  pcs.forEach((p,i)=>{
+    if(p.style.backgroundPosition!==`${-(i%3)*100}px ${-Math.floor(i/3)*100}px`)
+      ok=false;
   });
-
-  if(correct){
-    miniFireworks();
+  if(ok){
+    fireworks();
     setTimeout(()=>show("page4"),1200);
   }
 }

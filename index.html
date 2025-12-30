@@ -58,16 +58,21 @@ body{
 /* PUZZLE */
 .puzzle{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  width:300px;
+  grid-template-columns:repeat(3,100px);
+  gap:6px;
+  justify-content:center;
   margin:auto;
 }
-.puzzle img{
-  width:100%;
-  border:1px solid #fff;
+.piece{
+  width:100px;
+  height:100px;
+  background-image:url("IMG-20251005-WA0029.jpg");
+  background-size:300px 300px;
+  border-radius:12px;
+  cursor:pointer;
 }
 
-/* WISH */
+/* IMAGES */
 img{
   max-width:80%;
   margin:10px;
@@ -79,8 +84,8 @@ img{
 <body>
 
 <!-- MUSIC -->
-<audio id="bgMusic" loop>
-  <source src="A_Thousand_Years_Lyrics_-_Christina_Perri_#athousandyears_#christinaperri#trending_#lyrics(256k).mp3">
+<audio id="bgMusic" loop preload="auto">
+  <source src="A_Thousand_Years_Lyrics_-_Christina_Perri_#athousandyears_#christinaperri#trending_#lyrics(256k).mp3" type="audio/mpeg">
 </audio>
 
 <!-- PAGE 1 PASSWORD -->
@@ -130,17 +135,29 @@ img{
 </div>
 
 <script>
-const bgMusic=document.getElementById("bgMusic");
-
+/* PAGE CONTROL */
 function show(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
-/* MINI FIREWORKS */
+/* MUSIC – ANY USER ACTION */
+let musicStarted=false;
+function startMusic(){
+  if(!musicStarted){
+    const music=document.getElementById("bgMusic");
+    music.volume=0.7;
+    music.play().catch(()=>{});
+    musicStarted=true;
+  }
+}
+document.addEventListener("click",startMusic);
+document.addEventListener("touchstart",startMusic);
+
+/* FIREWORKS */
 function miniFireworks(){
   for(let i=0;i<15;i++){
-    let fw=document.createElement("div");
+    const fw=document.createElement("div");
     fw.className="firework";
     fw.style.left=Math.random()*100+"vw";
     fw.style.top=Math.random()*100+"vh";
@@ -153,8 +170,6 @@ function miniFireworks(){
 /* PASSWORD + COUNTDOWN */
 function checkPass(){
   if(pass.value==="RAAHII"){
-    bgMusic.play();
-
     let count=10;
     const status=document.getElementById("statusText");
     status.classList.add("heartbeat");
@@ -211,20 +226,62 @@ function startHearts(){
 }
 
 /* PUZZLE GAME */
+let first=null;
+
 function loadPuzzle(){
   const puzzle=document.getElementById("puzzle");
   puzzle.innerHTML="";
-  for(let i=0;i<9;i++){
-    const img=document.createElement("img");
-    img.src="IMG-20251005-WA0029.jpg";
-    puzzle.appendChild(img);
+  first=null;
+
+  let order=[0,1,2,3,4,5,6,7,8];
+  order.sort(()=>Math.random()-0.5);
+
+  order.forEach((pos,i)=>{
+    const div=document.createElement("div");
+    div.className="piece";
+
+    const x=(pos%3)*-100;
+    const y=Math.floor(pos/3)*-100;
+    div.style.backgroundPosition=`${x}px ${y}px`;
+
+    div.onclick=()=>selectPiece(div,i);
+    puzzle.appendChild(div);
+  });
+}
+
+function selectPiece(piece,index){
+  if(!first){
+    first={piece,index};
+    piece.style.outline="2px solid pink";
+  }else{
+    swapPieces(first.piece,piece);
+    first.piece.style.outline="none";
+    first=null;
+    checkSolved();
   }
-  setTimeout(()=>{
-    alert("Puzzle solved ❤️");
-    show("page4");
-  },6000);
+}
+
+function swapPieces(a,b){
+  const temp=a.style.backgroundPosition;
+  a.style.backgroundPosition=b.style.backgroundPosition;
+  b.style.backgroundPosition=temp;
+}
+
+function checkSolved(){
+  const pieces=document.querySelectorAll(".piece");
+  let correct=true;
+  pieces.forEach((p,i)=>{
+    const x=(i%3)*-100+"px";
+    const y=Math.floor(i/3)*-100+"px";
+    if(p.style.backgroundPosition!==`${x} ${y}`) correct=false;
+  });
+
+  if(correct){
+    miniFireworks();
+    setTimeout(()=>show("page4"),1200);
+  }
 }
 </script>
 
 </body>
-</html>
+  </html>

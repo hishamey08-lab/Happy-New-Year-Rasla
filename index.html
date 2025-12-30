@@ -83,9 +83,9 @@ img{
 
 <body>
 
-<!-- MUSIC -->
+<!-- 🎵 BACKGROUND MUSIC (INSTRUMENTAL) -->
 <audio id="bgMusic" loop preload="auto">
-  <source src="A_Thousand_Years_Lyrics_-_Christina_Perri_#athousandyears_#christinaperri#trending_#lyrics(256k).mp3" type="audio/mpeg">
+  <source src="A_Thousand_Years_Instrumental.mp3" type="audio/mpeg">
 </audio>
 
 <!-- PAGE 1 PASSWORD -->
@@ -141,7 +141,7 @@ function show(id){
   document.getElementById(id).classList.add("active");
 }
 
-/* MUSIC – ANY USER ACTION */
+/* 🎵 MUSIC — START ON ANY USER ACTION */
 let musicStarted=false;
 function startMusic(){
   if(!musicStarted){
@@ -170,6 +170,7 @@ function miniFireworks(){
 /* PASSWORD + COUNTDOWN */
 function checkPass(){
   if(pass.value==="RAAHII"){
+    startMusic(); // ✅ music guaranteed
     let count=10;
     const status=document.getElementById("statusText");
     status.classList.add("heartbeat");
@@ -177,13 +178,9 @@ function checkPass(){
     const timer=setInterval(()=>{
       if(count>3){
         status.innerHTML="💓 "+count;
-      }else if(count===3){
-        status.innerHTML="💓 Get ready Rasla… 3";
-      }else if(count===2){
-        status.innerHTML="💓 Get ready Rasla… 2";
-      }else if(count===1){
-        status.innerHTML="💓 Get ready Rasla… 1";
-        miniFireworks();
+      }else{
+        status.innerHTML="💓 Get ready Rasla… "+count;
+        if(count===1) miniFireworks();
       }
       count--;
 
@@ -244,27 +241,23 @@ function loadPuzzle(){
     const y=Math.floor(pos/3)*-100;
     div.style.backgroundPosition=`${x}px ${y}px`;
 
-    div.onclick=()=>selectPiece(div,i);
+    div.onclick=()=>selectPiece(div);
     puzzle.appendChild(div);
   });
 }
 
-function selectPiece(piece,index){
+function selectPiece(piece){
   if(!first){
-    first={piece,index};
+    first=piece;
     piece.style.outline="2px solid pink";
   }else{
-    swapPieces(first.piece,piece);
-    first.piece.style.outline="none";
+    const temp=first.style.backgroundPosition;
+    first.style.backgroundPosition=piece.style.backgroundPosition;
+    piece.style.backgroundPosition=temp;
+    first.style.outline="none";
     first=null;
     checkSolved();
   }
-}
-
-function swapPieces(a,b){
-  const temp=a.style.backgroundPosition;
-  a.style.backgroundPosition=b.style.backgroundPosition;
-  b.style.backgroundPosition=temp;
 }
 
 function checkSolved(){
@@ -284,4 +277,4 @@ function checkSolved(){
 </script>
 
 </body>
-    </html>
+  </html>
